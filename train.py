@@ -64,21 +64,23 @@ def initialize_test_loader(transform):
 def evaluate(net, criterion, epoch, test_loader):
     net.eval()
     total_loss = 0
-    for batch_i, data in enumerate(test_loader):
-        images = data['image']
-        keypoints = data['keypoints']
-        keypoints = keypoints.view(keypoints.size(0), -1)
-        keypoints = keypoints.type(torch.FloatTensor)
-        images = images.type(torch.FloatTensor)
-        keypoints = keypoints.to(device=device, dtype=torch.float)
-        images = images.to(device=device, dtype=torch.float)
+    # turn off grad to avoid cuda out of memory error
+    with torch.no_grad():
+        for batch_i, data in enumerate(test_loader):
+            images = data['image']
+            keypoints = data['keypoints']
+            keypoints = keypoints.view(keypoints.size(0), -1)
+            keypoints = keypoints.type(torch.FloatTensor)
+            images = images.type(torch.FloatTensor)
+            keypoints = keypoints.to(device=device, dtype=torch.float)
+            images = images.to(device=device, dtype=torch.float)
 
-        output = net(images)
-        loss = criterion(output, keypoints)
+            output = net(images)
+            loss = criterion(output, keypoints)
 
-        total_loss += loss
-    print('Epoch: {}, Test Dataset Loss: {}'.format(
-        epoch, total_loss / len(test_loader)))
+            total_loss += loss
+        print('Epoch: {}, Test Dataset Loss: {}'.format(
+            epoch, total_loss / len(test_loader)))
 
 
 def train(net, criterion, optimizer, epoch, train_loader, model_id,
