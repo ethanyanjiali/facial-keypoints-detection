@@ -63,8 +63,8 @@ def evaluate(net, criterion, epoch, test_loader):
         keypoints = keypoints.view(keypoints.size(0), -1)
         keypoints = keypoints.type(torch.FloatTensor)
         images = images.type(torch.FloatTensor)
-        keypoints.to(device=device)
-        images.to(device=device)
+        keypoints = keypoints.to(device=device, dtype=torch.FloatTensor)
+        images = images.to(device=device, dtype=torch.FloatTensor)
 
         output = net(images)
         loss = criterion(output, keypoints)
@@ -90,10 +90,8 @@ def train(net, criterion, optimizer, epoch, train_loader, model_id):
         # from (batch_size, 68, 2) to (batch_size, 136, 1)
         keypoints = keypoints.view(keypoints.size(0), -1)
         # PyTorch likes float type. So we convert to it.
-        keypoints = keypoints.type(torch.FloatTensor)
-        images = images.type(torch.FloatTensor)
-        keypoints.to(device=device)
-        images.to(device=device)
+        keypoints = keypoints.to(device=device, dtype=torch.FloatTensor)
+        images = images.to(device=device, dtype=torch.FloatTensor)
 
         # forward propagation - calculate the output
         output = net(images)
