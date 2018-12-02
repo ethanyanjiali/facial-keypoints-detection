@@ -10,7 +10,8 @@ from data_load import (CenterCrop, FacialKeypointsDataset, Normalize, Rescale,
                        ToTensor)
 from models import Net
 
-batch_size = 32
+train_batch_size = 64
+evaluate_batch_size = 10
 epochs = 10
 desired_image_shape = torch.empty(1, 224, 224).size()
 desired_keypoints_shape = torch.empty(68, 2).size()
@@ -31,7 +32,10 @@ def initialize_train_loader(transform):
     ) == desired_keypoints_shape, "Wrong train keypoints dimension"
 
     train_loader = DataLoader(
-        train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+        train_dataset,
+        batch_size=train_batch_size,
+        shuffle=True,
+        num_workers=0)
 
     return train_loader
 
@@ -49,7 +53,10 @@ def initialize_test_loader(transform):
     ) == desired_keypoints_shape, "Wrong test keypoints dimension"
 
     test_loader = DataLoader(
-        test_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+        test_dataset,
+        batch_size=evaluate_batch_size,
+        shuffle=True,
+        num_workers=0)
 
     return test_loader
 
