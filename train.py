@@ -63,6 +63,8 @@ def evaluate(net, criterion, epoch, test_loader):
         keypoints = keypoints.view(keypoints.size(0), -1)
         keypoints = keypoints.type(torch.FloatTensor)
         images = images.type(torch.FloatTensor)
+        keypoints.to(device)
+        images.to(device)
 
         output = net(images)
         loss = criterion(output, keypoints)
