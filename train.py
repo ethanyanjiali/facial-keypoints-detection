@@ -149,23 +149,23 @@ def run():
 
     loss_logger = []
 
-    for i in range(epochs):
+    for i in range(1, epochs + 1):
         model_name = 'model-{}-epoch-{}.pt'.format(model_id, i)
 
         # train all data for one epoch
-        train(net, criterion, optimizer, i + 1, train_loader, model_id,
+        train(net, criterion, optimizer, i, train_loader, model_id,
               loss_logger)
 
         # evaludate the accuracy after each epoch
-        evaluate(net, criterion, i + 1, test_loader)
+        evaluate(net, criterion, i, test_loader)
 
         # save model after every 5 epochs
         # https://discuss.pytorch.org/t/loading-a-saved-model-for-continue-training/17244/3
         # https://github.com/pytorch/pytorch/issues/2830
         # https://pytorch.org/tutorials/beginner/saving_loading_models.html
-        if i % 5 == 0:
+        if i % 5 == 1:
             torch.save({
-                'epoch': i + 1,
+                'epoch': i,
                 'model': net.state_dict(),
                 'optimizer': optimizer.state_dict(),
                 'loss_logger': loss_logger,
