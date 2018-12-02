@@ -123,7 +123,7 @@ def train(net, criterion, optimizer, epoch, train_loader, model_id,
 
         if batch_i % 10 == 9:  # print every 10 batches
             print('Epoch: {}, Batch: {}, Avg. Loss: {}'.format(
-                epoch + 1, batch_i + 1, batches_loss / 10))
+                epoch, batch_i + 1, batches_loss / 10))
             loss_logger.append(batches_loss)
             batches_loss = 0.0
 
