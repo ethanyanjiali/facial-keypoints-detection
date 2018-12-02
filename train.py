@@ -10,7 +10,7 @@ from data_load import (CenterCrop, FacialKeypointsDataset, Normalize, Rescale,
                        ToTensor)
 from models import Net
 
-batch_size = 64
+batch_size = 32
 epochs = 10
 desired_image_shape = torch.empty(1, 224, 224).size()
 desired_keypoints_shape = torch.empty(68, 2).size()
@@ -74,7 +74,8 @@ def evaluate(net, criterion, epoch, test_loader):
         epoch, total_loss / len(test_loader)))
 
 
-def train(net, criterion, optimizer, epoch, train_loader, model_id):
+def train(net, criterion, optimizer, epoch, train_loader, model_id,
+          loss_logger):
     # mark as train mode
     net.train()
     # initialize the batch_loss to help us understand
@@ -114,6 +115,7 @@ def train(net, criterion, optimizer, epoch, train_loader, model_id):
         if batch_i % 10 == 9:  # print every 10 batches
             print('Epoch: {}, Batch: {}, Avg. Loss: {}'.format(
                 epoch + 1, batch_i + 1, batches_loss / 10))
+            loss_logger.append(batches_loss)
             batches_loss = 0.0
 
 
@@ -136,11 +138,14 @@ def run():
     # define the params updating function using Adam
     optimizer = optim.Adam(net.parameters(), lr=0.001)
 
+    loss_logger = []
+
     for i in range(epochs):
         model_name = 'model-{}-epoch-{}.pt'.format(model_id, i)
 
         # train all data for one epoch
-        train(net, criterion, optimizer, i, train_loader, model_id)
+        train(net, criterion, optimizer, i, train_loader, model_id,
+              loss_logger)
 
         # evaludate the accuracy after each epoch
         evaluate(net, criterion, i, test_loader)
@@ -153,6 +158,7 @@ def run():
             'epoch': i,
             'model': net.state_dict(),
             'optimizer': optimizer.state_dict(),
+            'loss_logger': loss_logger,
         }, model_dir + model_name)
 
 
