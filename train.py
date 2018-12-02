@@ -171,6 +171,15 @@ def run():
                 'loss_logger': loss_logger,
             }, model_dir + model_name)
 
+    print("Finished training!")
+    model_name = 'model-{}-final.pt'.format(model_id)
+    torch.save({
+        'epoch': epochs,
+        'model': net.state_dict(),
+        'optimizer': optimizer.state_dict(),
+        'loss_logger': loss_logger,
+    }, model_dir + model_name)
+
 
 if __name__ == "__main__":
     run()
