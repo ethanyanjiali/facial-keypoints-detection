@@ -153,11 +153,11 @@ def run():
         model_name = 'model-{}-epoch-{}.pt'.format(model_id, i)
 
         # train all data for one epoch
-        train(net, criterion, optimizer, i, train_loader, model_id,
+        train(net, criterion, optimizer, i + 1, train_loader, model_id,
               loss_logger)
 
         # evaludate the accuracy after each epoch
-        evaluate(net, criterion, i, test_loader)
+        evaluate(net, criterion, i + 1, test_loader)
 
         # save model after every 5 epochs
         # https://discuss.pytorch.org/t/loading-a-saved-model-for-continue-training/17244/3
@@ -165,7 +165,7 @@ def run():
         # https://pytorch.org/tutorials/beginner/saving_loading_models.html
         if i % 5 == 0:
             torch.save({
-                'epoch': i,
+                'epoch': i + 1,
                 'model': net.state_dict(),
                 'optimizer': optimizer.state_dict(),
                 'loss_logger': loss_logger,
