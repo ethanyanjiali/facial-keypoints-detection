@@ -120,6 +120,7 @@ def train(net, criterion, optimizer, epoch, train_loader, model_id):
 
 
 def run():
+    print("CUDA is available: {}".format(torch.cuda.is_available()))
     data_transform = transforms.Compose(
         [Rescale(250), CenterCrop(224),
          Normalize(), ToTensor()])
