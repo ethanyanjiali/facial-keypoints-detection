@@ -29,12 +29,22 @@ def predict():
         abort(400)
     f = request.files['file']
     img = Image.open(f)
+    orig_width, orig_height = img.size
     img = data_transform(img)
     # our model expect batch input, so we need to unsqueeze here
     img = torch.unsqueeze(img, 0)
-    output = net(img)
-    output = output * 50 + 100
+    with torch.no_grad():
+        output = net(img)
     output = output.view(-1, 2)
+    # reverse normalize
+    output = output.numpy()
+    output = output * 50 + 100
+    # reverse center crop
+    top = (250 - 224) // 2
+    left = (250 - 224) // 2
+    output = output + [left, top]
+    # reverse rescale
+    output = output / [250 / orig_width, 250 / orig_height]
     response = {
         "keypoints": output.tolist(),
     }
