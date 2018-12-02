@@ -11,7 +11,7 @@ from data_load import (CenterCrop, FacialKeypointsDataset, Normalize, Rescale,
 from models import Net
 
 batch_size = 64
-epochs = 3
+epochs = 10
 desired_image_shape = torch.empty(1, 224, 224).size()
 desired_keypoints_shape = torch.empty(68, 2).size()
 model_dir = './saved_models/'
@@ -80,7 +80,7 @@ def train(net, criterion, optimizer, epoch, train_loader, model_id):
     # initialize the batch_loss to help us understand
     # the performance of multiple batches
     batches_loss = 0.0
-
+    print("Start training epoch " + epoch)
     for batch_i, data in enumerate(train_loader):
         # a batch of images (batch_size, 1, 224, 224)
         images = data['image']
