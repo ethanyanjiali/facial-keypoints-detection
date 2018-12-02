@@ -12,7 +12,7 @@ from models import Net
 
 train_batch_size = 64
 evaluate_batch_size = 10
-epochs = 10
+epochs = 55
 desired_image_shape = torch.empty(1, 224, 224).size()
 desired_keypoints_shape = torch.empty(68, 2).size()
 model_dir = './saved_models/'
@@ -159,16 +159,17 @@ def run():
         # evaludate the accuracy after each epoch
         evaluate(net, criterion, i, test_loader)
 
-        # save model after each epoch of training
+        # save model after every 5 epochs
         # https://discuss.pytorch.org/t/loading-a-saved-model-for-continue-training/17244/3
         # https://github.com/pytorch/pytorch/issues/2830
         # https://pytorch.org/tutorials/beginner/saving_loading_models.html
-        torch.save({
-            'epoch': i,
-            'model': net.state_dict(),
-            'optimizer': optimizer.state_dict(),
-            'loss_logger': loss_logger,
-        }, model_dir + model_name)
+        if i % 5 == 0:
+            torch.save({
+                'epoch': i,
+                'model': net.state_dict(),
+                'optimizer': optimizer.state_dict(),
+                'loss_logger': loss_logger,
+            }, model_dir + model_name)
 
 
 if __name__ == "__main__":
