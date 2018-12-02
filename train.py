@@ -63,8 +63,8 @@ def evaluate(net, criterion, epoch, test_loader):
         keypoints = keypoints.view(keypoints.size(0), -1)
         keypoints = keypoints.type(torch.FloatTensor)
         images = images.type(torch.FloatTensor)
-        keypoints.to(device)
-        images.to(device)
+        keypoints.to(device=device)
+        images.to(device=device)
 
         output = net(images)
         loss = criterion(output, keypoints)
@@ -92,8 +92,8 @@ def train(net, criterion, optimizer, epoch, train_loader, model_id):
         # PyTorch likes float type. So we convert to it.
         keypoints = keypoints.type(torch.FloatTensor)
         images = images.type(torch.FloatTensor)
-        keypoints.to(device)
-        images.to(device)
+        keypoints.to(device=device)
+        images.to(device=device)
 
         # forward propagation - calculate the output
         output = net(images)
@@ -131,7 +131,7 @@ def run():
     model_id = time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime())
     # instantiate the neural network
     net = Net()
-    net.to(device)
+    net.to(device=device)
     # define the loss function using SmoothL1Loss
     criterion = nn.SmoothL1Loss()
     # define the params updating function using Adam
