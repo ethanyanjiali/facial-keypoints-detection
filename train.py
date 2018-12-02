@@ -80,7 +80,7 @@ def train(net, criterion, optimizer, epoch, train_loader, model_id):
     # initialize the batch_loss to help us understand
     # the performance of multiple batches
     batches_loss = 0.0
-    print("Start training epoch " + epoch)
+    print("Start training epoch {}".format(epoch))
     for batch_i, data in enumerate(train_loader):
         # a batch of images (batch_size, 1, 224, 224)
         images = data['image']
