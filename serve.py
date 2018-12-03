@@ -10,7 +10,7 @@ app = Flask(__name__, static_url_path='/')
 
 net = Net()
 checkpoint = torch.load(
-    './saved_models/model-2018-12-02T08-16-33-final.pt', map_location='cpu')
+    './saved_models/model-2018-12-03T09_50_42-final.pt', map_location='cpu')
 net.load_state_dict(checkpoint['model'])
 net.eval()
 
