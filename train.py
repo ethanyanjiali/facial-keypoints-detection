@@ -11,7 +11,7 @@ from data_load import (CenterCrop, FacialKeypointsDataset, Normalize, Rescale,
                        ToTensor)
 from models import Net
 
-train_batch_size = 64
+train_batch_size = 32
 evaluate_batch_size = 10
 epochs = 55
 desired_image_shape = torch.empty(1, 224, 224).size()
