@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 import torch.optim as optim
 import torch.nn as nn
+from torchsummary import summary
 
 from data_load import (CenterCrop, FacialKeypointsDataset, Normalize, Rescale,
                        ToTensor)
@@ -142,6 +143,7 @@ def run():
     # instantiate the neural network
     net = Net()
     net.to(device=device)
+    summary(net, (1, 224, 224))
     # define the loss function using SmoothL1Loss
     criterion = nn.SmoothL1Loss()
     # define the params updating function using Adam

@@ -24,6 +24,7 @@ python-dateutil==2.7.5
 pytz==2018.7
 six==1.11.0
 torch==0.4.1
+torchsummary==1.5.1
 torchvision==0.2.1
 typed-ast==1.1.0
 Werkzeug==0.14.1

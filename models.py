@@ -1,93 +1,53 @@
-# TODO: define the convolutional neural network architecture
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-# can use the below import should you choose to initialize the weights of your Net
-import torch.nn.init as I
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class Net(nn.Module):
+    '''
+    This model is created based on the first version of AlexNet
+    https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
+    '''
+
     def __init__(self):
         super(Net, self).__init__()
 
-        # TODO: Define all the layers of this CNN, the only requirements are:
-        # 1. This network takes in a square (same width and height), grayscale image as input
-        # 2. It ends with a linear layer that represents the keypoints
-        # it's suggested that you make this last layer output 136 values, 2 for each of the 68 keypoint (x, y) pairs
+        # formula
+        # conv layer
+        # output_size = (input_size - kernel_size + 2 * padding) / stride + 1
+        # padding = ((output_size - 1) * stride) + kernel_size - input_size) / 2
+        # pooling layer
+        # output_size = (input_size - kernel_size) / stride + 1
+        # where input_size and output_size are the square image side length
 
-        # As an example, you've been given a convolutional layer, which you may (but don't have to) change:
-        # 1 input image channel (grayscale), 32 output channels/feature maps, 5x5 square convolution kernel
-        # output size = (224 - 5) / 1 + 1 = 220, 220 x 220 x 32
-        self.conv1 = nn.Conv2d(1, 32, 5)
+        self.features = nn.Sequential(
+            nn.Conv2d(1, 16, 11, stride=4, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(3, 2),
+            nn.Conv2d(16, 128, 5, stride=1, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(3, 2),
+            nn.Conv2d(128, 192, 3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(192, 192, 3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(192, 128, 3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(3, 2),
+        )
 
-        # maxpool layer
-        # kernel_size=2, stride=2
-        # output size = 220 / 2 = 110, 110 x 110 x 32
-        self.pool = nn.MaxPool2d(2, 2)
-
-        # 32 input image channels, 64 output channels, 5x5 square kernel,
-        # output size = (110 - 5) / 1 + 1 = 106
-        self.conv2 = nn.Conv2d(32, 64, 5)
-
-        # another pooling
-        # output size = 108 / 2 = 54
-
-        # 64 input image channels, 128 output channels, 5x5 square kernel,
-        # output size = (54 - 5) / 1 + 1 = 50
-        self.conv3 = nn.Conv2d(64, 128, 5)
-
-        # another pooling
-        # output size = 50 / 2 = 25
-
-        # 64 input image channels, 128 output channels, 5x5 square kernel,
-        # output size = (25 - 5) / 1 + 1 = 21
-        self.conv4 = nn.Conv2d(128, 256, 5)
-
-        # another pooling
-        # output size = 21 / 2 = 10
-
-        #  input image channels, 256 output channels, 5x5 square kernel,
-        # output size = (10 - 3) / 1 + 1 = 8
-        self.conv5 = nn.Conv2d(256, 256, 3)
-
-        # another pooling
-        # output size = 8 / 2 = 4
-
-        self.fc1 = nn.Linear(4 * 4 * 256, 2720)
-
-        self.fc1_drop = nn.Dropout(p=0.3)
-
-        self.fc2 = nn.Linear(2720, 680)
-
-        self.fc2_drop = nn.Dropout(p=0.3)
-
-        self.fc3 = nn.Linear(680, 136)
-
-        # Note that among the layers to add, consider including:
-        # maxpooling layers, multiple conv layers, fully-connected layers, and other layers (such as dropout or batch
-        # normalization) to avoid overfitting
+        self.classifier = nn.Sequential(
+            nn.Dropout(p=0.5),
+            nn.Linear(6 * 6 * 128, 2048),
+            nn.ReLU(inplace=True),
+            nn.Dropout(p=0.5),
+            nn.Linear(2048, 2048),
+            nn.ReLU(inplace=True),
+            nn.Linear(2048, 136),
+        )
 
     def forward(self, x):
-        # TODO: Define the feedforward behavior of this model
-        # x is the input image and, as an example, here you may choose to include a pool/conv step:
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = self.pool(F.relu(self.conv3(x)))
-        x = self.pool(F.relu(self.conv4(x)))
-        x = self.pool(F.relu(self.conv5(x)))
-
-        # prep for linear layer
-        # flatten the inputs into a vector
-        x = x.view(x.size(0), -1)
-
-        x = self.fc1(x)
-        x = self.fc1_drop(x)
-        x = self.fc2(x)
-        x = self.fc2_drop(x)
-        x = self.fc3(x)
-
-        # a modified x, having gone through all the layers of your model, should be returned
+        x = self.features(x)
+        x = x.view(x.size(0), 6 * 6 * 128)
+        x = self.classifier(x)
         return x
